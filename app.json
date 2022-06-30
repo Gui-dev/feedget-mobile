@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "feedget",
+    "slug": "feedget",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
