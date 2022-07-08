@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 40,
-    widht: 40
+    width: 40
   },
   title: {
     fontSize: 14,
