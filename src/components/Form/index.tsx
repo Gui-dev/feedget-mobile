@@ -52,7 +52,7 @@ export const Form = ({ feedbackType, onFeedbackCanceled, onFeedbackSent }: FormP
         comment,
         screenshot: `data:image/png;base64,${screenshotBase64}`
       })
-
+      setComment('')
       onFeedbackSent()
     } catch (error) {
       console.log(error)
