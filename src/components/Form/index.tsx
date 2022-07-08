@@ -13,9 +13,11 @@ import Button from '../Button'
 
 interface FormProps {
   feedbackType: FeedbackType
+  onFeedbackCanceled: () => void
+  onFeedbackSent: () => void
 }
 
-export const Form = ({ feedbackType }: FormProps) => {
+export const Form = ({ feedbackType, onFeedbackCanceled, onFeedbackSent }: FormProps) => {
   const feedbackTypeInfo = feedbackTypes[feedbackType]
   const [screenshot, setScreenshot] = useState<string | null>(null)
 
@@ -36,7 +38,9 @@ export const Form = ({ feedbackType }: FormProps) => {
     <View style={styles.container}>
 
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={onFeedbackCanceled}
+        >
           <ArrowLeft size={24} color={theme.colors.text_secondary} weight="bold"/>
         </TouchableOpacity>
 
@@ -51,6 +55,7 @@ export const Form = ({ feedbackType }: FormProps) => {
 
       <TextInput
         style={styles.input}
+        autoCorrect={false}
         placeholder="Algo não está funcionando bem? Queremos corrigir. Conte com detalhes o que está acontecendo"
         placeholderTextColor={theme.colors.text_secondary}
         multiline
