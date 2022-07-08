@@ -4,14 +4,21 @@ import { Image, Text, TouchableOpacity, View } from 'react-native'
 import successImage from './../../assets/success.png'
 import styles from './style'
 
-export const Success = () => {
+interface SuccessProps {
+  onSendAnotherFeedback: () => void
+}
+
+export const Success = ({ onSendAnotherFeedback }: SuccessProps) => {
   return (
     <View style={styles.container}>
       <Image source={successImage} style={styles.image}/>
       <Text style={styles.title}>
         Agradecemos o feedback
       </Text>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={onSendAnotherFeedback}
+      >
         <Text style={styles.buttonTitle}>Quero enviar outro</Text>
       </TouchableOpacity>
     </View>
