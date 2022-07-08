@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { ArrowLeft } from 'phosphor-react-native'
 import { captureScreen } from 'react-native-view-shot'
+import * as FileSystem from 'expo-file-system'
 
 import { FeedbackType } from './../Widget'
 import { ScreenshotButton } from './../ScreenshotButton'
@@ -10,6 +11,7 @@ import { feedbackTypes } from './../../utils/feedbackTypes'
 import styles from './style'
 import { theme } from '../../theme'
 import Button from '../Button'
+import { api } from '../../services/api'
 
 interface FormProps {
   feedbackType: FeedbackType
@@ -20,6 +22,8 @@ interface FormProps {
 export const Form = ({ feedbackType, onFeedbackCanceled, onFeedbackSent }: FormProps) => {
   const feedbackTypeInfo = feedbackTypes[feedbackType]
   const [screenshot, setScreenshot] = useState<string | null>(null)
+  const [comment, setComment] = useState('')
+  const [isSendingFeedback, setIsSendingFeedback] = useState(false)
 
   const handleScreenshot = () => {
     captureScreen({
@@ -32,6 +36,29 @@ export const Form = ({ feedbackType, onFeedbackCanceled, onFeedbackSent }: FormP
 
   const handleRemoveScreenshot = () => {
     setScreenshot(null)
+  }
+
+  const handleSendFeedback = async () => {
+    if (isSendingFeedback) return
+
+    try {
+      setIsSendingFeedback(true)
+      const screenshotBase64 = screenshot && await FileSystem.readAsStringAsync(screenshot, {
+        encoding: 'base64'
+      })
+
+      await api.post('/feedbacks', {
+        type: feedbackType,
+        comment,
+        screenshot: `data:image/png;base64,${screenshotBase64}`
+      })
+
+      onFeedbackSent()
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsSendingFeedback(false)
+    }
   }
 
   return (
@@ -59,6 +86,8 @@ export const Form = ({ feedbackType, onFeedbackCanceled, onFeedbackSent }: FormP
         placeholder="Algo não está funcionando bem? Queremos corrigir. Conte com detalhes o que está acontecendo"
         placeholderTextColor={theme.colors.text_secondary}
         multiline
+        value={comment}
+        onChangeText={setComment}
       />
 
       <View style={styles.footer}>
@@ -67,7 +96,10 @@ export const Form = ({ feedbackType, onFeedbackCanceled, onFeedbackSent }: FormP
           onTakeShot={handleScreenshot}
           onRemoveShot={handleRemoveScreenshot}
         />
-        <Button isLoading={false}/>
+        <Button
+          isLoading={isSendingFeedback}
+          onPress={handleSendFeedback}
+        />
       </View>
     </View>
   )
